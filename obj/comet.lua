@@ -2,6 +2,8 @@
 local Comet = class('Comet')
 --	 I'M A SHOOTING STAR!
 
+local OrbitManager = require('obj.orbitmanager')
+
 Comet.static.WIDTH = IRESX
 Comet.static.HEIGHT = IRESY
 Comet.static.CENTERX = Comet.WIDTH/2
@@ -53,6 +55,7 @@ function Comet:initialize(attributes)
 	self.orbitingStar = false
 	self.orbitPoint = {x = 0, y = 0}
 
+	self.orbitManager = OrbitManager:new()
 	table.insert(self.trail, #self.trail, {self.x, self.y} )
 end
 
@@ -96,6 +99,8 @@ function Comet:doOrbit(dt)
 	local temp_vel = Comet.magnitude_2d_sq(temp_x_vel, temp_y_vel)
 
 	self.vel = {x = temp_x_vel, y = temp_y_vel}
+
+	-- update rings
 end
 
 function Comet:draw()
@@ -175,13 +180,10 @@ function Comet:draw()
 end
 
 function Comet:drawOrbit()
-	love.graphics.setColor(Comet.COLOR1)
-	lg.line(
-		self.orbitPoint.x,
-		self.orbitPoint.y,
-		self.x,
-		self.y
-	)
+	-- debug
+	-- love.graphics.setColor(Comet.COLOR1)
+	-- lg.line(self.orbitPoint.x, self.orbitPoint.y, self.x, self.y)
+	self.orbitManager:draw({x = self.x, y = self.y }, self.orbitPoint)
 end
 
 function Comet:keypressed(orbitPoint)

@@ -12,6 +12,7 @@ function StarManager:initialize(attributes)
 	self.x = 0 or attributes.x
 	self.y = 0 or attributes.y
 	self.stars = {}
+	self.updateNearest = true
 	for i = 1, StarManager.MAX_STARS do
 		self.stars[i] = Star:new({
 			x = math.random(self.x - CENTERX * 3, self.x + CENTERX * 1),
@@ -22,20 +23,28 @@ function StarManager:initialize(attributes)
 end
 
 function StarManager:update(camera, player)
-	if self.nearestStar then
-		self.stars[self.nearestStar].highlighted = false
+	local closestStar 
+	if (self.updateNearest) then
+		if self.nearestStar then
+			self.stars[self.nearestStar].highlighted = false
+		end
+		self.nearestStar = nil
+		closestStar = StarManager.MAX_DISTANCE
 	end
-	self.nearestStar = nil
-	local closestStar = StarManager.MAX_DISTANCE
 	for i,v in ipairs(self.stars) do
 		self.stars[i]:update(camera)
-		local starDistance = (self.stars[i].x - player.x+ CENTERX )^2 + (self.stars[i].y - player.y + CENTERY)^2
-		if starDistance < closestStar then
-			closestStar = starDistance
-			self.nearestStar = i
+
+		if (self.updateNearest) then
+			local starDistance = (self.stars[i].x - player.x+ CENTERX )^2 + (self.stars[i].y - player.y + CENTERY)^2
+			if starDistance < closestStar then
+				closestStar = starDistance
+				self.nearestStar = i
+			end
 		end
 	end
-	self.stars[self.nearestStar].highlighted = true
+	if (self.nearestStar) then
+		self.stars[self.nearestStar].highlighted = true
+	end
 end
 
 function StarManager:getClosestStar() 
@@ -49,6 +58,14 @@ function StarManager:draw()
 			self.stars[i]:draw()
 		end
 	lg.pop()
+end
+
+function StarManager:keypressed()
+	self.updateNearest = false
+end
+
+function StarManager:keyreleased()
+	self.updateNearest = true
 end
 
 return StarManager

@@ -37,12 +37,11 @@ function NewDraw:update(dt)
   local previousCameraY = camera.y
 
   -- lerp camera
-  
-  camera.x = lerp(camera.x, -player.x + CENTERX/drawScale, LERP_TIME)
-  camera.y = lerp(camera.y, -player.y + CENTERY/drawScale, LERP_TIME)
+  -- camera.x = lerp(camera.x, -player.x + CENTERX/drawScale, LERP_TIME)
+  -- camera.y = lerp(camera.y, -player.y + CENTERY/drawScale, LERP_TIME)
   -- dont lerp
-  -- camera.x = -player.x + CENTERX/drawScale
-  -- camera.y = -player.y + CENTERY/drawScale
+  camera.x = -player.x + CENTERX/drawScale
+  camera.y = -player.y + CENTERY/drawScale
 
   particleManager:update(dt, { x = camera.x - previousCameraX, y = camera.y - previousCameraY }, camera)
   starManager:update(camera, { x = player.x, y = player.y })
@@ -63,9 +62,15 @@ function NewDraw:keypressed()
   if starManager.nearestStar == nil then else
     local star = starManager:getClosestStar()
     player:keypressed({ x = star.x + CENTERX, y = star.y + CENTERY })
+    starManager:keypressed()
   end
 end
 
 function NewDraw:keyreleased()
   player:keyreleased()
+  starManager:keyreleased()
 end
+
+-- get difference of vel to previous
+-- lerp difference value to smooth
+-- closer to 0, adjust the lerp speed of camera to catch up to straight lines, lag more on orbits

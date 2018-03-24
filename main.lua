@@ -47,13 +47,6 @@ function love.load()
 
 	require 'obj.gamestate'  	-- Go go gadget gamestate
 
-	-- require 'lua.title'
-	-- require 'lua.game'
-	-- require 'lua.draw'
-	require 'lua.comettest'
-	require 'lua.particletest'
-	require 'lua.newdraw'
-
 	scaleCanvas = love.graphics.newCanvas(IRESX,IRESY)
 	colors = 		{
 					background = {13,44,64},
@@ -94,6 +87,13 @@ function love.load()
 	audio["OFU"]:setLooping( true )
 
 	stateCarrier = 	{}
+
+	-- require 'lua.title'
+	-- require 'lua.game'
+	-- require 'lua.draw'
+	require 'lua.comettest'
+	require 'lua.particletest'
+	require 'lua.newdraw'
 
 	gamestate = Gamestate:new()
 	gamestate:gotoState('NewDraw')

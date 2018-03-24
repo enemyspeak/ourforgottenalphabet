@@ -5,14 +5,13 @@ local Comet = require 'obj.comet'
 local ParticleManager = require 'obj.particlemanager'
 local StarManager = require 'obj.starmanager'
 
+-- define some constants
+local LERP_TIME = 0.05
+
 -- define some singletons
 local player, particleManager, starManager
 
 -- define some values
-local vel = {
-  x = 0,
-  y = 0
-}
 local camera = {
   x = CENTERX,
   y = CENTERY
@@ -27,33 +26,26 @@ function NewDraw:enteredState()
   player = Comet:new({ x = 0, y = 0 })
   particleManager = ParticleManager:new()
   starManager = StarManager:new()
-
 end
 
 local drawScale = 1
 
 function NewDraw:update(dt)
-  local mx,my = love.mouse.getPosition()
-  mx = mx -CENTERX
-  my = my -CENTERY
-  vel = { x = mx, y = -my }
-
-  player.vel = vel
-
   player:update(dt)
 
   local previousCameraX = camera.x
   local previousCameraY = camera.y
 
   -- lerp camera
-  camera.x = lerp(camera.x, -player.x + CENTERX/drawScale, 0.025)
-  camera.y = lerp(camera.y, -player.y + CENTERY/drawScale, 0.025)
+  
+  camera.x = lerp(camera.x, -player.x + CENTERX/drawScale, LERP_TIME)
+  camera.y = lerp(camera.y, -player.y + CENTERY/drawScale, LERP_TIME)
   -- dont lerp
   -- camera.x = -player.x + CENTERX/drawScale
   -- camera.y = -player.y + CENTERY/drawScale
 
-  particleManager:update(dt, { x = camera.x - previousCameraX, y = camera.y - previousCameraY }, camera) -- this vel here is relative to the camera
-  starManager:update(camera, { x = player.x, y = player.y }) -- this vel here is relative to the camera
+  particleManager:update(dt, { x = camera.x - previousCameraX, y = camera.y - previousCameraY }, camera)
+  starManager:update(camera, { x = player.x, y = player.y })
 end
 
 function NewDraw:draw()
@@ -64,4 +56,16 @@ function NewDraw:draw()
       starManager:draw()
       player:draw()
   love.graphics.pop()
+end
+
+function NewDraw:keypressed()
+  -- todo check gamestate..
+  if starManager.nearestStar == nil then else
+    local star = starManager:getClosestStar()
+    player:keypressed({ x = star.x + CENTERX, y = star.y + CENTERY })
+  end
+end
+
+function NewDraw:keyreleased()
+  player:keyreleased()
 end

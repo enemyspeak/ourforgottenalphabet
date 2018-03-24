@@ -38,6 +38,10 @@ function StarManager:update(camera, player)
 	self.stars[self.nearestStar].highlighted = true
 end
 
+function StarManager:getClosestStar() 
+	return self.stars[self.nearestStar]
+end
+
 function StarManager:draw()
 	lg.push()
 	lg.translate(CENTERX,CENTERY)

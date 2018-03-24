@@ -12,7 +12,7 @@ function love.load()
 	love.graphics.setLineJoin( 'bevel' )
 
 	love.mouse.setVisible(false)
-	love.mouse.setGrabbed(true)
+	-- love.mouse.setGrabbed(true)
 
 	TOGGLEBIG = true
 	-- IRESX = 568 -- 5
@@ -202,19 +202,19 @@ function love.keyreleased(key)
 end
 
 function love.touchpressed()
-	gamestate:keypressed('o', 'o')
+	gamestate:keypressed()
 end
 
 function love.touchreleased()
-	gamestate:keyreleased('o')
+	gamestate:keyreleased()
 end
 
 function love.mousepressed(x, y, button)
-	gamestate:mousepressed(x, y, button)
+	gamestate:keyreleased(key)
 end
 
 function love.mousereleased(x, y, button)
-	gamestate:mousereleased(x, y, button)
+	gamestate:keypressed()
 end
 
 function love.quit()

@@ -25,21 +25,35 @@ Comet.static.createStencil = function ()
 	love.graphics.rectangle("fill",0,-3/2,20,3)
 end
 
+Comet.static.magnitude_2d = function (x, y)
+	return math.sqrt(x*x + y*y)
+end
+
+Comet.static.normalize_2d = function (x, y)
+	local mag = Comet.magnitude_2d(x, y)
+	if mag == 0 then return {0,0} end
+	return {x/mag, y/mag}
+end
+
+Comet.static.magnitude_2d_sq = function (x, y)
+	return x*x + y*y
+end
+
 function Comet:initialize(attributes)
 	local attributes = attributes or {}
 	self.x = attributes.x or Comet.CENTERX
 	self.y = attributes.y or Comet.CENTERY
 
 	self.size = Comet.static.SIZE
-
 	self.vel = {x = 300, y = 10}
-
 	self.trail = {}
-	table.insert(self.trail, #self.trail, {self.x, self.y} )
-end
 
-function Comet:setAlpha(value)
-	self.alpha = value
+	self.accel = 0
+
+	self.orbitingStar = false
+	self.orbitPoint = {x = 0, y = 0}
+
+	table.insert(self.trail, #self.trail, {self.x, self.y} )
 end
 
 function Comet:update(dt)	-- Called only when drawing constellations
@@ -50,23 +64,38 @@ function Comet:update(dt)	-- Called only when drawing constellations
 	if (#self.trail > Comet.LONGERTRAIL_MAX) then
 		table.remove(self.trail, 1)
 	end
+
+	if self.orbitingStar then
+		self:doOrbit(dt)
+	else 
+		self.accel = 0 -- reset?
+	end
 end
 
-function Comet:getPos()
-	return self.x,self.y
-end
+function Comet:doOrbit(dt) 
+	local interval = 0.2
+	local orbitDirection = math.atan2(self.x - self.orbitPoint.x , self.y - self.orbitPoint.y)+math.pi/2		-- atan2 = math.atan() - math.pi/2
+	local normal_acceleration = 18
+	local temp_norm_accel = Comet.normalize_2d((math.cos(orbitDirection)),(math.sin(orbitDirection)))
 
-function Comet:setPos(xpos,ypos) -- slow af
-	self.x = xpos
-	self.y = ypos
-	self.vel = {
-		x = self.x - xpos,
-		y = self.y - ypos
-	}
-end
+	local temp_x_accel = temp_norm_accel[1] * normal_acceleration * self.accel
+	local temp_y_accel = temp_norm_accel[2] * normal_acceleration * self.accel
+	local max_accel = 1
 
-function Comet:setScale(value)
-	self.scale = value
+	self.accel = self.accel + dt * 30
+	if self.accel > max_accel then
+		self.accel = max_accel
+	end
+
+	local temp_x_vel = self.vel.x
+	local temp_y_vel = self.vel.y
+
+	temp_x_vel = temp_x_vel + temp_x_accel
+	temp_y_vel = temp_y_vel + temp_y_accel
+
+	local temp_vel = Comet.magnitude_2d_sq(temp_x_vel, temp_y_vel)
+
+	self.vel = {x = temp_x_vel, y = temp_y_vel}
 end
 
 function Comet:draw()
@@ -137,7 +166,31 @@ function Comet:draw()
 		love.graphics.ellipse("fill", 0, 0,self.size+factor,self.size)
 
 	love.graphics.pop()
+
+	if self.orbitingStar then
+		self:drawOrbit()
+	end
+
 	love.graphics.pop()
+end
+
+function Comet:drawOrbit()
+	love.graphics.setColor(Comet.COLOR1)
+	lg.line(
+		self.orbitPoint.x,
+		self.orbitPoint.y,
+		self.x,
+		self.y
+	)
+end
+
+function Comet:keypressed(orbitPoint)
+	self.orbitPoint = orbitPoint
+	self.orbitingStar = true
+end
+
+function Comet:keyreleased()
+	self.orbitingStar = false
 end
 
 return Comet

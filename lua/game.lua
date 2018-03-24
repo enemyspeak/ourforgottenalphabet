@@ -537,9 +537,9 @@ local function drawOrbit()
 		local drawScale = gameTween.drawScale
 
 		local c = love.graphics.getCanvas()
-		oribtCanvas:clear( )
+		-- oribtCanvas:clear( )
 		love.graphics.setCanvas(oribtCanvas)
-		
+		lg.clear(unpack(colors["background"]))
 		local StarX,StarY = stars[highlight]:getPos()		-- There should be a way of passing update variables here
 		local CometX, CometY =  comet:getPos()			
 	
@@ -602,7 +602,10 @@ local function drawOrbit()
 			love.graphics.pop()	
 		end
 		
-		love.graphics.setInvertedStencil(createInvertedStencil)
+		-- love.graphics.setInvertedStencil(createInvertedStencil)
+	    love.graphics.stencil(createInvertedStencil, "replace", 1)
+	    love.graphics.setStencilTest("less", 1)
+
 		love.graphics.push()
 		love.graphics.translate(CENTERX,CENTERY)		
 		love.graphics.scale(gameTween.drawScale)
@@ -612,12 +615,20 @@ local function drawOrbit()
 				rings[i]:draw()
 			end
 		love.graphics.pop()
-		love.graphics.setInvertedStencil()
+		-- love.graphics.setInvertedStencil()
+	    love.graphics.setStencilTest()
+
 		love.graphics.setCanvas(c)	
-			love.graphics.setStencil(createStencil)
+		    love.graphics.stencil(createStencil, "replace", 1)
+		    love.graphics.setStencilTest("greater", 0)
+
+			-- love.graphics.setStencil(createStencil)
 			love.graphics.setColor(255,255,255)
 			love.graphics.draw(oribtCanvas, 0,0, 0, 1,1)
-		love.graphics.setStencil()
+
+		    love.graphics.setStencilTest()
+
+		-- love.graphics.setStencil()
 		love.graphics.setColor(255,255,255)
 		love.graphics.push()
 		love.graphics.translate(CENTERX,CENTERY)
@@ -684,7 +695,10 @@ local function drawConstellations()
 			local lastY = false
 			
 			for j,k in ipairs(constellations[v]) do
-				love.graphics.setInvertedStencil(createConstellationStencil)		
+				-- love.graphics.setInvertedStencil(createConstellationStencil)		
+				love.graphics.stencil(createConstellationStencil, "replace", 1)
+			    love.graphics.setStencilTest("less", 1)
+
 				if lastX == false and lastY == false then else 	
 					love.graphics.setColor(unpack(colors["blue2"]))	
 					love.graphics.setLineWidth(1)
@@ -693,7 +707,9 @@ local function drawConstellations()
 				local sx,sy = constellations[v][j]:getPos()
 				lastX = sx
 				lastY = sy
-				love.graphics.setInvertedStencil()	
+				-- love.graphics.setInvertedStencil()	
+			    love.graphics.setStencilTest()
+
 			end
 		end
 --	end
@@ -857,8 +873,8 @@ function Game:draw()
 	love.graphics.scale(gameTween.drawScale)
 	love.graphics.translate(gameTween.translateX,gameTween.translateY)
 	love.graphics.setDefaultFilter("nearest","nearest")
-	love.graphics.setPointStyle("rough")
-    love.graphics.setLineStyle("rough")
+	-- love.graphics.setPointStyle("rough")
+    -- love.graphics.setLineStyle("rough")
    	love.graphics.setPointSize(1)
 	love.graphics.setLineWidth(1)
 

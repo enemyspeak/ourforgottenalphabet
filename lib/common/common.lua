@@ -4,14 +4,6 @@
 
 local common = {}
 
-function common:getRandomSigned(low,high)
-	local temp = math.random(low,high)
-	if math.random(1,2) == 1 then
-		temp = -temp
-	end
-	return temp
-end
-
 function common:mapValue(value,low,high,mapLow,mapHigh) 
 	return (((mapHigh - mapLow) * (value / (high - low))) + mapLow)
 end

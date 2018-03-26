@@ -1,8 +1,6 @@
 
 local Cluster = class('Cluster')
 
-Cluster.static.CENTERX = love.graphics.getWidth()/2
-Cluster.static.CENTERY = love.graphics.getHeight()/2
 Cluster.static.COLOR1 = {255,255,255}
 
 function Cluster:initialize(attributes)
@@ -15,7 +13,6 @@ function Cluster:initialize(attributes)
 	self.active = false;
 	self.outerRadius = 0
 	self.innerRadius = 0
-	self.hidden = false
 end
 
 function Cluster:getState(xpos,ypos, value)
@@ -25,10 +22,6 @@ function Cluster:getState(xpos,ypos, value)
 		temp = true
 	end
 	return temp
-end
-
-function Cluster:setHidden(value)
-	self.hidden = value
 end
 
 function Cluster:setActive(value)
@@ -43,35 +36,13 @@ function Cluster:setActive(value)
 	end
 end
 
-function Cluster:setPos(xpos,ypos)
-	self.x = xpos
-	self.y = ypos
-end
-
-function Cluster:setRadius(value)
-	self.radius = value
-end
-
 function Cluster:update(cx,cy,dt)
-	if (!self.active) then return false end
-	clusterClock = clusterClock + dt
-
-	if clusterClock > 1 then
-		if self:getState(cx,cy) then else
-			return true
-	 	end
-	end
-
-	return false
-end
-
-function Cluster:debugDraw()
-	love.graphics.setColor(unpack(Cluster.COLOR1))
-	love.graphics.circle("line",0.5+math.floor(self.x),0.5+math.floor(self.y),self.radius)
 end
 
 function Cluster:draw(cx,cy)
 	love.graphics.setColor(unpack(Cluster.COLOR1))
+	-- debug
+	-- love.graphics.circle("line",0.5+math.floor(self.x),0.5+math.floor(self.y),self.radius)
 
 	if (self.active) then
 		local ClusterStencil = function()
@@ -79,12 +50,10 @@ function Cluster:draw(cx,cy)
 		end
 
 		love.graphics.stencil(ClusterStencil, "replace", 1)
-	  love.graphics.setStencilTest("less", 1)
-
+	  	love.graphics.setStencilTest("less", 1)
 			love.graphics.setColor(colors["cluster"])
 			love.graphics.circle("fill",self.x,self.y,cluster:getRadius()+clusterTween.outerRadius)
-
-			love.graphics.setStencilTest()
+		love.graphics.setStencilTest()
 	else
 		love.graphics.circle("fill",0.5+math.floor(self.x),0.5+math.floor(self.y),self.radius)
 	end

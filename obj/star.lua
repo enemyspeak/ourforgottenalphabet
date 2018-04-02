@@ -28,9 +28,9 @@ function Star:initialize(attributes)
 	local attributes = attributes or {}
 	self.x = attributes.x or 0
 	self.y = attributes.y or 0
-    self.typ = attributes.typ or 1 -- Star.types[attributes.typ]
+  self.typ = attributes.typ or 1 -- Star.types[attributes.typ]
 	self.scale = 1
-	self.constellation =  false	
+	self.constellation =  false
     self.alt = attributes.alt or false
 	self.highlighted = false
 
@@ -42,7 +42,7 @@ function Star:initialize(attributes)
 end
 
 function Star:update(camera)
-    if self.constellation then return end
+	if self.constellation then return end
 
 	if self.x <  ((-camera.x) - Star.KILLZONEX) then
 		self.x = ((-camera.x) + (Star.KILLZONEX - Star.SAFEZONE))
@@ -68,7 +68,7 @@ function Star:draw(value)
 	local scale = 1 -- todo
 	if self.highlighted then
 		love.graphics.setColor(unpack(Star.COLOR2))	-- highlight
-		love.graphics.circle("fill",math.floor(self.x)*scale,math.floor(self.y)*scale,5)	
+		love.graphics.circle("fill",math.floor(self.x)*scale,math.floor(self.y)*scale,5)
 		love.graphics.setColor(unpack(Star.COLOR3))	-- normal, probably
 	elseif value == false then
 		love.graphics.setColor(unpack(Star.COLOR1))	-- probably outside of a cluster- black on white

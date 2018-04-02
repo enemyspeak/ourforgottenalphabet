@@ -94,15 +94,17 @@ function love.load()
 	require 'lua.comettest'
 	require 'lua.particletest'
 	require 'lua.newdraw'
+	require 'lua.clustertest'
 
 	gamestate = Gamestate:new()
-	gamestate:gotoState('NewDraw')
+	gamestate:gotoState('ClusterTest')
 
 	lg = love.graphics
 end
 
 function love.update(dt)
 	if HASFOCUS then		-- pause when the game loses focus
+		tween.update(dt)
 		gamestate:update(dt)
 	end
 end

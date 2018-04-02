@@ -47,7 +47,7 @@ function Comet:initialize(attributes)
 	self.y = attributes.y or Comet.CENTERY
 
 	self.size = Comet.static.SIZE
-	self.vel = {x = 300, y = 10}
+	self.vel = {x = 30, y = 10}
 	self.trail = {}
 
 	self.accel = 0
@@ -70,12 +70,12 @@ function Comet:update(dt)	-- Called only when drawing constellations
 
 	if self.orbitingStar then
 		self:doOrbit(dt)
-	else 
+	else
 		self.accel = 0 -- reset?
 	end
 end
 
-function Comet:doOrbit(dt) 
+function Comet:doOrbit(dt)
 	local interval = 0.2
 	local orbitDirection = math.atan2(self.x - self.orbitPoint.x , self.y - self.orbitPoint.y)+math.pi/2		-- atan2 = math.atan() - math.pi/2
 	local normal_acceleration = 18

@@ -1,117 +1,54 @@
-
-
-
-
 --	A star twinkled, and then I existed.
-
-
-
-
-function love.run()
-    if love.math then
-        love.math.setRandomSeed(os.time())
-    end
-
-    if love.event then
-        love.event.pump()
-    end
-
-    if love.load then love.load(arg) end
-
-    -- We don't want the first frame's dt to include time taken by love.load.
-    if love.timer then love.timer.step() end
-
-    local dt = 0
-
-    -- Main loop time.
-    while true do
-        -- Process events.
-        if love.event then
-            love.event.pump()
-            for e,a,b,c,d in love.event.poll() do
-                if e == "quit" then 
-                    if not love.quit or not love.quit() then
-                        if love.audio then
-                            love.audio.stop()
-                        end
-                        return
-                    end
-                end
-                love.handlers[e](a,b,c,d)
-            end
-        end
-
-        -- Update dt, as we'll be passing it to update
-        if love.timer then
-            love.timer.step()
-            dt = love.timer.getDelta()
-        end
-
-        -- Call update and draw
-        if love.update then love.update(dt) end -- will pass 0 if love.timer is disabled
-
-        if love.window and love.graphics and love.window.isCreated() then
-            love.graphics.clear()
-            love.graphics.origin()
-            if love.draw then love.draw() end
-            love.graphics.present()
-        end
-
-        if love.timer then love.timer.sleep(0.001) end
-    end
-end
-
 
 function love.load()
 	math.randomseed(tonumber(tostring(os.time()):reverse():sub(1,6)))	-- OSX randomseed
 	for i=1, 4 do math.random() end	-- For good measure
 
 	love.graphics.setDefaultFilter("nearest","nearest")
-	love.graphics.setPointStyle("rough")
+		-- love.graphics.setPointStyle("rough")
     love.graphics.setLineStyle("rough")
    	love.graphics.setPointSize(1)
 	love.graphics.setLineWidth(1)
+	love.graphics.setLineJoin( 'bevel' )
 
-    love.mouse.setVisible(false)
-	
+	love.mouse.setVisible(false)
+	-- love.mouse.setGrabbed(true)
+
 	TOGGLEBIG = true
-	IRESX = 480
-	IRESY = 320	--	4
-	-- IRESY = 360 -- 4:3 resolution
-	IRESX = 568 -- 5
+	-- IRESX = 568 -- 5
+	IRESX = 640
+	IRESY = 360	--	4
+	WIDTH = IRESX
+	HEIGHT = IRESY
+	CENTERX = WIDTH/2
+	CENTERY = HEIGHT/2
 
-	if love.graphics.getHeight() == IRESY and love.graphics.getWidth() == IRESX then 
+	if love.graphics.getHeight() == IRESY and love.graphics.getWidth() == IRESX then
 		ISCALE = 1
 	else
 		if love.graphics.getWidth()/IRESX >= love.graphics.getHeight()/IRESY then
-			ISCALE = love.graphics.getHeight()/IRESY 
+			ISCALE = love.graphics.getHeight()/IRESY
 		else
 			ISCALE = love.graphics.getHeight()/IRESX
 		end
 	end
 	HASFOCUS = true
 
-
-
--- 	External Files
-					require 'lib.middleclass'
-	Stateful = 		require 'lib.stateful.stateful'
+	-- 	External Files
+							require 'lib.middleclass'
+	Stateful = 	require 'lib.stateful.stateful'
 	hs2 = 			require 'lib.hs2.hs2'
-	tween =		 	require 'lib.tween.tween'
-					require 'lib.ellipse.ellipse'
-	common =		require 'lib.common.common'
+	tween =			require 'lib.tween.tween'
+							require 'lib.ellipse.ellipse'
+	common = 		require 'lib.common.common'
 
-	love.filesystem.setIdentity("OurForgottenAlphabetBeta")		
+	love.filesystem.setIdentity("OurForgottenAlphabetBeta")
 	hs = hs2.load("highscores.txt", 1, "a", 0)
-	
+
 	require 'obj.gamestate'  	-- Go go gadget gamestate
-	
-	require 'lua.title'
-	require 'lua.game'
-	require 'lua.draw'
-	
+
 	scaleCanvas = love.graphics.newCanvas(IRESX,IRESY)
-	colors = 		{	
+	colors = 		{
 					background = {13,44,64},
 					white = {255,255,255,255},
 					cluster = {230,230,254},
@@ -127,13 +64,7 @@ function love.load()
 					clock = love.graphics.newFont("res/FreePixel.ttf",15),
 					score = love.graphics.newFont("res/FreePixel.ttf",30)
 					}
-	graphics =		{
-					arrow = love.graphics.newImage("res/arrow2.png")				
-					}
-	audio =			{
-					OFU = love.audio.newSource("res/OFU.ogg","stream") 
-					}
--- if "static" is omitted, LÖVE will stream the file from disk --.mp3 playback buggy, .ogg recommended
+
 	--[[
 	colors = 		{		-- Alternate colors.
 					background = {0,0,38},
@@ -145,14 +76,17 @@ function love.load()
 					}
 	--]]
 
-	love.audio.setVolume( 1 )					
-	audio["OFU"]:setVolume(0.75) -- 50% of ordinary volume
-	audio["OFU"]:setLooping( true )
-					
-	stateCarrier = 	{}
+	-- require 'lua.title'
+	-- require 'lua.game'
+	-- require 'lua.draw'
+	require 'lua.comettest'
+	require 'lua.particletest'
+	require 'lua.newdraw'
 
 	gamestate = Gamestate:new()
-	gamestate:gotoState('Title')
+	gamestate:gotoState('NewDraw')
+
+	lg = love.graphics
 end
 
 function love.update(dt)
@@ -162,13 +96,15 @@ function love.update(dt)
 end
 
 function love.draw()
-	scaleCanvas:clear()
 	love.graphics.setCanvas(scaleCanvas)
+	-- love.graphics.clear(0,0,0)
+		lg.clear(unpack(colors["background"]))
 
 		gamestate:draw()
-	
+
 	love.graphics.setCanvas()
 	love.graphics.setBackgroundColor(0,0,0)
+
 	love.graphics.draw(scaleCanvas,love.graphics.getWidth()/2,love.graphics.getHeight()/2,0,ISCALE,ISCALE,IRESX/2,IRESY/2)
 end
 
@@ -180,6 +116,10 @@ function love.resize( w, h )
 	else
 		ISCALE = w/IRESX
 	end
+	WIDTH = IRESX
+	HEIGHT = IRESY
+	CENTERX = WIDTH/2
+	CENTERY = HEIGHT/2
 	--gamestate:resize(w,h)
 end
 
@@ -210,6 +150,10 @@ function love.keypressed(key, unicode)
 			else
 				w = IRESX
 				h = IRESY
+				WIDTH = IRESX
+				HEIGHT = IRESY
+				CENTERX = WIDTH/2
+				CENTERY = HEIGHT/2
 			end
 			love.window.setMode( w, h,{fullscreen=false})
 			love.resize( w, h )
@@ -224,12 +168,19 @@ function love.keypressed(key, unicode)
 		else
 			w = IRESX
 			h = IRESY
+			WIDTH = IRESX
+			HEIGHT = IRESY
+			CENTERX = WIDTH/2
+			CENTERY = HEIGHT/2
 		end
 		love.window.setMode( w, h)
 		love.resize( w, h )
 	elseif key == "s" then
-		local s = love.graphics.newScreenshot() 
+		local s = love.graphics.newScreenshot()
 		s:encode("OurForgottenAlphabet"..os.time()..".png")
+	elseif key == 'escape' then
+		hs:save()								-- Save the highscores! Then,
+		love.event.push('quit')
 	end
 	gamestate:keypressed(key, unicode)
 end
@@ -238,12 +189,20 @@ function love.keyreleased(key)
 	gamestate:keyreleased(key)
 end
 
+function love.touchpressed()
+	gamestate:keypressed()
+end
+
+function love.touchreleased()
+	gamestate:keyreleased()
+end
+
 function love.mousepressed(x, y, button)
-	gamestate:mousepressed(x, y, button)
+	gamestate:keyreleased(key)
 end
 
 function love.mousereleased(x, y, button)
-	gamestate:mousereleased(x, y, button)
+	gamestate:keypressed()
 end
 
 function love.quit()

@@ -1,25 +1,22 @@
 function love.conf(t)
-	t.identity = "OurForgottenAlphabetBeta"              
-    t.version = "0.9.0"                -- The LÖVE version this game was made for (string)
+	t.identity = "OurForgottenAlphabetBeta"
+    -- t.version = "0.9.0"                -- The LÖVE version this game was made for (string)
     t.console = false                  -- Attach a console (boolean, Windows only)
 
 	t.window.title =  " "
     t.window.icon = nil                -- Filepath to an image to use as the window's icon (string)
-    --t.window.width = 480              -- The window width (number)
-    --t.window.height = 320              -- The window height (number)
+    t.window.width = 640              -- The window width (number)
+    t.window.height = 360              -- The window height (number)
     --t.window.width = 960              -- The window width (number)
-    t.window.width = 1136              -- The window width (number)
-    t.window.height = 640    -- 3:4          -- The window height (number)
---    t.window.height = 720    -- 4:3          -- The window height (number)
+    --    t.window.height = 720    -- 4:3          -- The window height (number)
 
-    
+    -- t.window.width = 2208              -- The window width (number)
+    -- t.window.height = 1242    -- 3:4          -- The window height (number)
 
-    t.window.borderless = false        -- Remove all border visuals from the window (boolean)
-    t.window.resizable = true          -- Let the window be user-resizable (boolean)
-    t.window.minwidth = 480            -- Minimum window width if the window is resizable (number)
-    t.window.minheight = 320           -- Minimum window height if the window is resizable (number)
+
+    t.window.borderless = true        -- Remove all border visuals from the window (boolean)
+    t.window.highdpi = true
     t.window.fullscreen = false        -- Enable fullscreen (boolean)
-    t.window.fullscreentype = "normal" -- Standard fullscreen or desktop fullscreen mode (string)
     t.window.vsync = true              -- Enable vertical sync (boolean)
     t.window.fsaa = 0                  -- The number of samples to use with multi-sampled antialiasing (number)
     t.window.display = 1               -- Index of the monitor to show the window in (number)

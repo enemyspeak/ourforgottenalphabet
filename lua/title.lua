@@ -34,7 +34,7 @@ local comet
 local gameScore
 local bestScore = 0
 
-local constellationFlicker 
+local constellationFlicker
 
 local titleTween = {}
 local titleTimer
@@ -50,7 +50,7 @@ local function getObjectXY(kind)
 	local safex = (IRESX/2 + kind.SAFEZONE)
 	local safey = (IRESY/2 + kind.SAFEZONE)
 	local x,y
-	
+
 	if math.random(1,2) == 1 then
 		if vel.x < 0  then 						-- Star direction logic
 			x = -safex
@@ -67,7 +67,7 @@ local function getObjectXY(kind)
 			x = math.random(-safex, safex)
 			y = -safey
 		end
-	end	
+	end
 	return x,y
 end
 
@@ -78,7 +78,7 @@ local function getParticleAttributes()
 		temp = 0.75
 		temp2 = Particle.COLOR4
 	elseif  n == 3 or  n == 4 then
-		temp = 1.5	
+		temp = 1.5
 		temp2 = Particle.COLOR1
 	elseif  n == 5 or  n == 8 then
 		temp = 0.5
@@ -86,7 +86,7 @@ local function getParticleAttributes()
 	elseif  n == 6 then
 		temp = 1.25
 		temp2 = Particle.COLOR2
-	else 
+	else
 		temp = 1
 		temp2 = Particle.COLOR3
 	end
@@ -134,7 +134,7 @@ showClusters = function()
 		showClusters()
 	end
 
-	if clusterNumber == 0 then 
+	if clusterNumber == 0 then
 		clusterNumber = #constellations -- Restart loop
 	end
 
@@ -152,13 +152,13 @@ local function updateParticles(dt)
 	if #particles < MAXPARTICLES then
 		local speed, color = getParticleAttributes()
 		local x,y = getObjectXY(Particle)
-		particles[#particles + 1] = Particle:new({x = x, y = y, speed = speed, color = color}) 
+		particles[#particles + 1] = Particle:new({x = x, y = y, speed = speed, color = color})
 	end
 end
 
 function updateConstellations(dt)						-- Update constellations
-	for i=1, #constellations do 
-		for k, s in ipairs(constellations[i]) do			
+	for i=1, #constellations do
+		for k, s in ipairs(constellations[i]) do
 			constellations[i][k]:update(dt)
 		end
 	end
@@ -171,7 +171,7 @@ local function updateStars(dt)
 			table.remove(stars,i)
 		end
 	end
-	
+
 	local interval = 50
 	local rate = 2
 
@@ -181,12 +181,12 @@ local function updateStars(dt)
 	if starBufferX > interval then
 		starBufferX = 0
 		local x,y = getObjectXY(Star,'x')
-		stars[#stars + 1] = Star:new({x = x, y = y, typ = getStarType()}) 
+		stars[#stars + 1] = Star:new({x = x, y = y, typ = getStarType()})
 	end
 	if starBufferY > interval then
 		starBufferY = 0
 		local x,y = getObjectXY(Star,'y')
-		stars[#stars + 1] = Star:new({x = x, y = y, typ = getStarType()}) 
+		stars[#stars + 1] = Star:new({x = x, y = y, typ = getStarType()})
 	end
 end
 
@@ -211,7 +211,7 @@ end
 
 local function drawClusters()
 	if #clusters > 0 then
-		clusters[#clusters]:draw(titleTween.drawScale)
+		-- clusters[#clusters]:draw(titleTween.drawScale)
 	end
 end
 
@@ -227,25 +227,25 @@ local function drawStars()
 	for i,v in ipairs(stars) do
 		--if stars[i]:isOnScreen() then -- this doesn't work because the camera isn't moving
 --[[
-		local xpos,ypos = stars[i]:getPos()	
+		local xpos,ypos = stars[i]:getPos()
 		local x = titleTween.translateX*titleTween.drawScale
 		local y = titleTween.translateY*titleTween.drawScale
 		if ( x+CENTERX  > xpos) and ( x-CENTERX  < xpos) and  ( y+CENTERY > ypos) and ( y-CENTERY < ypos) then
 			]]
 			stars[i]:draw(nil,titleTween.drawScale)
-		
+
 		--end
 
 	end
 end
 
 local function drawTitle()
-	love.graphics.setColor(unpack(colors["white"]))	
+	love.graphics.setColor(unpack(colors["white"]))
 	love.graphics.setFont(fonts["title2"])
 	local top = -102
 	local offset = 55
 	love.graphics.printf("OUR", -CENTERX, top, WIDTH, "center" )
-	love.graphics.printf("FORGOTTEN", -CENTERX, top + offset, WIDTH, "center" )	
+	love.graphics.printf("FORGOTTEN", -CENTERX, top + offset, WIDTH, "center" )
 
 	local fwidth = fonts["title2"]:getWidth( "_ALPHABET" )
 	local dwidth = fonts["title2"]:getWidth( "_" )
@@ -260,17 +260,21 @@ local function drawConstellations()
 			for i,v in ipairs(constellations) do
 				local lastX = false
 				local lastY = false
-				for j,k in ipairs(constellations[i]) do	
-					love.graphics.setInvertedStencil(constellationStencil)
+				for j,k in ipairs(constellations[i]) do
+					-- love.graphics.setInvertedStencil(constellationStencil)
+					love.graphics.stencil(constellationStencil, "replace", 1)
+					love.graphics.setStencilTest("less", 1)
+
 					local sx,sy = constellations[i][j]:getPos()
-					if lastX == false and lastY == false then else 	
-						love.graphics.setColor(unpack(colors["blue2"]))	
+					if lastX == false and lastY == false then else
+						love.graphics.setColor(unpack(colors["blue2"]))
 						love.graphics.setLineWidth(1)
 						love.graphics.line(math.floor(lastX)*scale,math.floor(lastY)*scale,math.floor(sx)*scale,math.floor(sy)*scale)
 					end
 					lastX = sx
 					lastY = sy
-					love.graphics.setInvertedStencil()	
+					-- love.graphics.setInvertedStencil()
+					love.graphics.setStencilTest()
 				end
 			end
 	--	end
@@ -281,17 +285,17 @@ local function drawBestscore()
 	love.graphics.setFont(fonts["subtitle"])
 
 	if newRecord then
-		love.graphics.setColor(unpack(colors["highlight"]))	
+		love.graphics.setColor(unpack(colors["highlight"]))
 		love.graphics.printf("NEW RECORD", -CENTERX, 90, WIDTH, "center" )
 	end
-	love.graphics.setColor(unpack(colors["blue"]))	
+	love.graphics.setColor(unpack(colors["blue"]))
 	love.graphics.printf("BEST SCORE: ".. bestScore, -CENTERX, 110, WIDTH, "center" )
 end
 
 local function drawCredits()
 	--	credit
-	love.graphics.setColor(unpack(colors["highlight"]))	
-	love.graphics.printf("INSPIRED BY STEPH THIRION", -CENTERX, -120, WIDTH, "center" )	-- www.playfaraway.com
+	-- love.graphics.setColor(unpack(colors["highlight"]))
+	-- love.graphics.printf("INSPIRED BY STEPH THIRION", -CENTERX, -120, WIDTH, "center" )	-- www.playfaraway.com
 end
 
 local function drawComet()
@@ -306,19 +310,19 @@ local function drawHud( )
 	if gameScore < 10 then
 		digits = "0000"
 	elseif gameScore < 100 then
-		digits = "000"	
-	elseif gameScore < 1000 then	
-		digits = "00"	
-	elseif gameScore < 10000 then	
+		digits = "000"
+	elseif gameScore < 1000 then
+		digits = "00"
+	elseif gameScore < 10000 then
 		digits = "0"
-	else 		
+	else
 		digits = ""
 	end
-	
-	love.graphics.setColor(unpack(colors["background"]))		
+
+	love.graphics.setColor(unpack(colors["background"]))
 	love.graphics.rectangle("fill",WIDTH - 50,8,40,12)
-	love.graphics.setColor(unpack(colors["white"]))	
-	love.graphics.setFont(fonts["clock"])	
+	love.graphics.setColor(unpack(colors["white"]))
+	love.graphics.setFont(fonts["clock"])
 	love.graphics.print(digits..gameScore, WIDTH - 50, 5)
 end
 
@@ -343,7 +347,7 @@ end
 
 
 
-function Title:enteredState()	
+function Title:enteredState()
 	if stateCarrier["gameover"] then
 		stars = stateCarrier["stars"]
 		constellations = stateCarrier["constellations"]
@@ -359,8 +363,8 @@ function Title:enteredState()
 			if stars[i]:getConstellation() then else
 				table.insert(temp,stars[i])
 			end
-		end 		
-	
+		end
+
 		local mapX = 0
 		local mapY = 0
 		local lowX = 0
@@ -389,15 +393,15 @@ function Title:enteredState()
 
 		local temp2 = math.abs(mapX + mapY) + math.abs(lowX + lowY)
 		for i = 0, temp2/30 do
-			local x 
-			local y 
+			local x
+			local y
 			local n = true
 
 			while n do
 				n = false
 				x = math.random(lowX,mapX)
 				y = math.random(lowY,mapY)
-				for i,v in ipairs(clusters) do 
+				for i,v in ipairs(clusters) do
 					local t = clusters[i]:getFastState(x,y)
 					if ( CENTERX + WIDTH > x) and ( CENTERX - WIDTH < x) and  ( CENTERY + HEIGHT > y) and ( CENTERY - HEIGHT < y) then
 						t = true
@@ -413,12 +417,12 @@ function Title:enteredState()
 				end
 			end
 
-			table.insert(temp, Star:new({ x = x, y = y, typ = getStarType()})) 
+			table.insert(temp, Star:new({ x = x, y = y, typ = getStarType()}))
 		end
 		for i,v in ipairs(constellations) do
 			for j,k in ipairs(constellations[i]) do
 				local x,y = constellations[i][j]:getPos()
- 				table.insert(temp, Star:new({ x = x, y = y, typ = getStarType()})) 
+ 				table.insert(temp, Star:new({ x = x, y = y, typ = getStarType()}))
  			end
 		end
 
@@ -441,7 +445,7 @@ function Title:enteredState()
 						}
 
 		tween(4,titleTween,{drawScale = 0.5,buttonDelay = 1},"outCubic")
-		
+
 		inFade = true
 		outFade = false
 		titleAlpha = 255
@@ -453,7 +457,7 @@ function Title:enteredState()
 					local x,y = constellations[i][j]:getPos()
 					love.graphics.circle("fill",x*titleTween.drawScale,y*titleTween.drawScale,10*titleTween.drawScale)
 				end
-			end	
+			end
 		end
 	else
 
@@ -470,10 +474,10 @@ function Title:enteredState()
 
 		for i = 1, MAXPARTICLES/2 do
 			local speed, color = getParticleAttributes()
-			particles[i] =  Particle:new({ x = math.random(-CENTERX,CENTERX), y = math.random(-CENTERY,CENTERY), speed = speed, color = color}) 
+			particles[i] =  Particle:new({ x = math.random(-CENTERX,CENTERX), y = math.random(-CENTERY,CENTERY), speed = speed, color = color})
 		end
 		for i = 1, MAXSTARS do
-			stars[i] =  Star:new({ x = math.random(-(CENTERX+Star.SAFEZONE),(CENTERX+Star.SAFEZONE)), y = math.random(-CENTERY,CENTERY), typ = getStarType()}) 
+			stars[i] =  Star:new({ x = math.random(-(CENTERX+Star.SAFEZONE),(CENTERX+Star.SAFEZONE)), y = math.random(-CENTERY,CENTERY), typ = getStarType()})
 		end
 		outFade = false
 		constellationFlicker = false
@@ -485,7 +489,7 @@ function Title:enteredState()
 	newRecord = false
 	local x, y = hs:get(1)				-- Get the top entry from the highscore table, with best_name a dummy variable to fill that argument
 	if bestScore ~= y and stateCarrier.gameScore ~= nil then
-		newRecord = true	
+		newRecord = true
 	end
 	bestScore = y
 end
@@ -499,7 +503,7 @@ end
 function Title:update(dt)
 	tween.update(dt)
 	titleTimer = titleTimer + dt
-	
+
 	if stateCarrier["gameover"] then else
 		updateParticles(dt)
 		updateStars(dt)
@@ -517,18 +521,18 @@ function Title:draw()
 	love.graphics.scale(titleTween.drawScale)
 	love.graphics.translate(titleTween.translateX,titleTween.translateY)
 	love.graphics.setDefaultFilter("nearest","nearest")
-	love.graphics.setPointStyle("rough")
-    love.graphics.setLineStyle("rough")
+	-- love.graphics.setPointStyle("rough")
+    -- love.graphics.setLineStyle("rough")
    	love.graphics.setPointSize(1)
 	love.graphics.setLineWidth(1)
 
 		drawParticles()
 		drawComet()
 		drawClusters()  		-- debug
-	
+
 	love.graphics.pop()
 	love.graphics.push()
-	love.graphics.translate(CENTERX,CENTERY)	
+	love.graphics.translate(CENTERX,CENTERY)
 	love.graphics.translate(titleTween.translateX*titleTween.drawScale,titleTween.translateY*titleTween.drawScale)
 		drawConstellations()
 		drawStars()
@@ -537,7 +541,7 @@ function Title:draw()
 	love.graphics.translate(CENTERX,CENTERY)
 
 	if stateCarrier["gameover"] then
-		if titleTimer > 3 then 
+		if titleTimer > 3 then
 			drawTitle()
 			drawBestscore()
 			drawCredits()
@@ -563,7 +567,7 @@ end
 function Title:keypressed(key, unicode)
 	if key == 'escape' then
 		hs:save()								-- Save the highscores! Then,
-		love.event.push('quit')					-- Send 'quit' even to event queue	
+		love.event.push('quit')					-- Send 'quit' even to event queue
 	elseif key == 'd' then
 	elseif key == 'a' or key == 'f' or key == 's' or key == 'd' then
 	else

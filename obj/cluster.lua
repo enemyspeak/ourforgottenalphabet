@@ -1,8 +1,6 @@
-		
+
 local Cluster = class('Cluster')
 
-Cluster.static.CENTERX = love.graphics.getWidth()/2
-Cluster.static.CENTERY = love.graphics.getHeight()/2
 Cluster.static.COLOR1 = {255,255,255}
 
 function Cluster:initialize(attributes)
@@ -12,14 +10,12 @@ function Cluster:initialize(attributes)
 	self.numStars = attributes.numStars or 7
 	self.radius = attributes.radius or 620
 	self.n = attributes.number or 1
+	self.active = false;
+	self.outerRadius = 0
+	self.innerRadius = 0
 end
 
-function Cluster:update(dt)	
-	self.x = self.x + -vel.x * dt
-	self.y = self.y + vel.y * dt
-end
-
-function Cluster:getState(xpos,ypos, value) 
+function Cluster:getState(xpos,ypos, value)
 	local value = value or 0
 	local temp = false
 	if ( self.x - xpos ) ^ 2 + ( self.y - ypos ) ^ 2 < (self.radius - value) ^ 2 then		-- Within Circle (x-a)^2 + (y-b)^2 = r ^2
@@ -28,52 +24,39 @@ function Cluster:getState(xpos,ypos, value)
 	return temp
 end
 
-function Cluster:getFastState(xpos,ypos, v) 
-	if v == nil then
-		value = 0
+function Cluster:setActive(value)
+	if (self.active == value) then return end
+	self.active = value
+	if (self.active) then
+		tween(0.45, self, { innerRadius = self.radius - 5 }, "outQuad", -- the -5 here is to pad the edges for the player.
+			tween, 1, self, { outerRadius = WIDTH }, "inQuad"
+		)
 	else
-		value = v
+		tween( 1, self, { innerRadius = WIDTH, outerRadius = WIDTH + 10 }, "inBack", self:setHidden())
 	end
-	local temp = false
-	if ( self.x + self.radius - value > xpos) and ( self.x - self.radius - value < xpos) and  ( self.y + self.radius - value > ypos) and ( self.y - self.radius - value < ypos) then
-		temp = true
+end
+
+function Cluster:update(cx,cy,dt)
+end
+
+function Cluster:draw(cx,cy)
+	love.graphics.setColor(unpack(Cluster.COLOR1))
+	-- debug
+	-- love.graphics.circle("line",0.5+math.floor(self.x),0.5+math.floor(self.y),self.radius)
+
+	if (self.active) then
+		local ClusterStencil = function()
+			love.graphics.circle("fill",cx,cy,clusterTween.innerRadius)
+		end
+
+		love.graphics.stencil(ClusterStencil, "replace", 1)
+	  	love.graphics.setStencilTest("less", 1)
+			love.graphics.setColor(colors["cluster"])
+			love.graphics.circle("fill",self.x,self.y,cluster:getRadius()+clusterTween.outerRadius)
+		love.graphics.setStencilTest()
+	else
+		love.graphics.circle("fill",0.5+math.floor(self.x),0.5+math.floor(self.y),self.radius)
 	end
-	return temp
-end
-
-function Cluster:getNumStars()
-	return self.numStars
-end
-
-function Cluster:getNumber()
-	return self.n
-end
-
-function Cluster:getPos()
-	return self.x,self.y
-end
-
-function Cluster:setPos(xpos,ypos)
-	self.x = xpos
-	self.y = ypos
-end
-
-function Cluster:getRadius()
-	return self.radius
-end
-
-function Cluster:setRadius(value)
-	self.radius = value
-end
-
-function Cluster:debugDraw()
-	love.graphics.setColor(unpack(Cluster.COLOR1))
-	love.graphics.circle("line",0.5+math.floor(self.x),0.5+math.floor(self.y),self.radius)
-end
-
-function Cluster:draw()
-	love.graphics.setColor(unpack(Cluster.COLOR1))
-	love.graphics.circle("fill",0.5+math.floor(self.x),0.5+math.floor(self.y),self.radius)
 end
 
 return Cluster

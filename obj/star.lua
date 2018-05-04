@@ -44,6 +44,7 @@ end
 function Star:update(camera)
 	if self.constellation then return end
 
+
 	if self.x <  ((-camera.x) - Star.KILLZONEX) then
 		self.x = ((-camera.x) + (Star.KILLZONEX - Star.SAFEZONE))
 	end

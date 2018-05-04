@@ -64,13 +64,7 @@ function love.load()
 					clock = love.graphics.newFont("res/FreePixel.ttf",15),
 					score = love.graphics.newFont("res/FreePixel.ttf",30)
 					}
-	graphics =		{
-					arrow = love.graphics.newImage("res/arrow2.png")
-					}
-	audio =			{
-					OFU = love.audio.newSource("res/OFU.ogg","stream")
-					}
--- if "static" is omitted, LÖVE will stream the file from disk --.mp3 playback buggy, .ogg recommended
+
 	--[[
 	colors = 		{		-- Alternate colors.
 					background = {0,0,38},
@@ -81,12 +75,6 @@ function love.load()
 					alt = {100,212,255}
 					}
 	--]]
-
-	love.audio.setVolume( 1 )
-	audio["OFU"]:setVolume(0.75) -- 50% of ordinary volume
-	audio["OFU"]:setLooping( true )
-
-	stateCarrier = 	{}
 
 	-- require 'lua.title'
 	-- require 'lua.game'

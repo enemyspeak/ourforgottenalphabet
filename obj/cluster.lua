@@ -137,6 +137,8 @@ end
 
 function Cluster:draw(cx,cy)
 	love.graphics.setColor(unpack(Cluster.COLOR1))
+	-- debug
+	-- love.graphics.circle("line",0.5+math.floor(self.x),0.5+math.floor(self.y),self.radius)
 
 	if (self.active) then
 		local ClusterStencil = function()

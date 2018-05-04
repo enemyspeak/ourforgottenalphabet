@@ -14,7 +14,7 @@ function love.load()
 	love.mouse.setVisible(false)
 	-- love.mouse.setGrabbed(true)
 
-	TOGGLEBIG = true
+	TOGGLEBIG = false
 	-- IRESX = 568 -- 5
 	IRESX = 640
 	IRESY = 360	--	4
@@ -22,6 +22,7 @@ function love.load()
 	HEIGHT = IRESY
 	CENTERX = WIDTH/2
 	CENTERY = HEIGHT/2
+		
 
 	if love.graphics.getHeight() == IRESY and love.graphics.getWidth() == IRESX then
 		ISCALE = 1
@@ -32,6 +33,12 @@ function love.load()
 			ISCALE = love.graphics.getHeight()/IRESX
 		end
 	end
+
+	local w = 1136
+	local h = 640
+	love.window.setMode( w, h,{fullscreen=false})
+	love.resize( w, h )
+
 	HASFOCUS = true
 
 	-- 	External Files
@@ -83,10 +90,12 @@ function love.load()
 	require 'lua.particletest'
 	require 'lua.newdraw'
 	require 'lua.clustertest'
+	require 'lua.orbittest'
 
 	gamestate = Gamestate:new()
-	gamestate:gotoState('ClusterTest')
-
+	-- gamestate:gotoState('ClusterTest')
+	gamestate:gotoState('OrbitTest')
+	
 	lg = love.graphics
 end
 

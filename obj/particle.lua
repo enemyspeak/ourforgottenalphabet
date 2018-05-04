@@ -25,22 +25,22 @@ function Particle:initialize(attributes)
 	self.onScreen = true
 end
 
-function Particle:update(dt,vel,camera)
+function Particle:update(dt,vel,camera, scale)
 	if (self.speed == 1) then else
 		self.x = self.x + (vel.x * self.speed * Particle.PARALLAX) * dt
 		self.y = self.y + (vel.y * self.speed * Particle.PARALLAX) * dt
 	end
-	if self.x <  ((-camera.x) - Particle.KILLZONEX) then
-		self.x = ((-camera.x) + (Particle.KILLZONEX - Particle.SAFEZONE))
+	if self.x <  ((-camera.x * scale) - Particle.KILLZONEX) then
+		self.x = ((-camera.x * scale) + (Particle.KILLZONEX - Particle.SAFEZONE))
 	end
-	if self.x  > ((-camera.x) + Particle.KILLZONEX) then
-		self.x = ((-camera.x) - (Particle.KILLZONEX - Particle.SAFEZONE))
+	if self.x  > ((-camera.x * scale) + Particle.KILLZONEX) then
+		self.x = ((-camera.x * scale) - (Particle.KILLZONEX - Particle.SAFEZONE))
 	end
-	if self.y <  ((-camera.y) - Particle.KILLZONEY) then
-		self.y = ((-camera.y) + (Particle.KILLZONEY - Particle.SAFEZONE))
+	if self.y <  ((-camera.y * scale) - Particle.KILLZONEY) then
+		self.y = ((-camera.y * scale) + (Particle.KILLZONEY - Particle.SAFEZONE))
 	end
-	if self.y  > ((-camera.y) + Particle.KILLZONEY) then
-		self.y = ((-camera.y) - (Particle.KILLZONEY - Particle.SAFEZONE))
+	if self.y  > ((-camera.y * scale) + Particle.KILLZONEY) then
+		self.y = ((-camera.y * scale) - (Particle.KILLZONEY - Particle.SAFEZONE))
 	end
 end
 

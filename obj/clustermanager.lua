@@ -65,8 +65,8 @@ function ClusterManager:update(dt, player)
 	-- return false
 end
 
-function ClusterManager:draw()
-    self.clusters[#self.clusters]:draw()
+function ClusterManager:draw(scale)
+    self.clusters[#self.clusters]:draw(scale)
     self.arrow:draw()
 end
 

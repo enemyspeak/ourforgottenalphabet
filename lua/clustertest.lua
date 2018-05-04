@@ -60,9 +60,9 @@ function ClusterTest:draw()
     lg.scale(camera.scale)
     love.graphics.translate(camera.x,camera.y)
       particleManager:draw(camera.x,camera.y)
-      starManager:draw()
+      starManager:draw(camera.scale, true)
       player:draw()
-      cluster:draw(player.x,player.y)
+      cluster:draw(camera.scale, player.x, player.y)
   love.graphics.pop()
 end
 

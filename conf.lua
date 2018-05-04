@@ -5,6 +5,8 @@ function love.conf(t)
 
 	t.window.title =  " "
     t.window.icon = nil                -- Filepath to an image to use as the window's icon (string)
+    -- w = 1136
+    -- h = 640
     t.window.width = 640              -- The window width (number)
     t.window.height = 360              -- The window height (number)
     --t.window.width = 960              -- The window width (number)

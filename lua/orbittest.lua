@@ -28,7 +28,7 @@ function OrbitTest:enteredState()
   starManager = StarManager:new()
 end
 
-local drawScale = 1
+local drawScale = 0.8
 
 function OrbitTest:update(dt)
   player:update(dt)
@@ -37,14 +37,14 @@ function OrbitTest:update(dt)
   local previousCameraY = camera.y
 
   -- lerp camera
-  -- camera.x = lerp(camera.x, -player.x + CENTERX/drawScale, LERP_TIME)
-  -- camera.y = lerp(camera.y, -player.y + CENTERY/drawScale, LERP_TIME)
+  camera.x = lerp(camera.x, -player.x + CENTERX/drawScale, LERP_TIME)
+  camera.y = lerp(camera.y, -player.y + CENTERY/drawScale, LERP_TIME)
   -- dont lerp
-  camera.x = -player.x + CENTERX/drawScale
-  camera.y = -player.y + CENTERY/drawScale
+  -- camera.x = -player.x + CENTERX/drawScale
+  -- camera.y = -player.y + CENTERY/drawScale
 
-  particleManager:update(dt, { x = camera.x - previousCameraX, y = camera.y - previousCameraY }, camera)
-  starManager:update(camera, { x = player.x, y = player.y })
+  particleManager:update(dt, { x = camera.x - previousCameraX, y = camera.y - previousCameraY }, camera, drawScale)
+  starManager:update(camera, { x = player.x, y = player.y }, drawScale)
 end
 
 function OrbitTest:draw()
@@ -52,7 +52,7 @@ function OrbitTest:draw()
     lg.scale(drawScale)
     love.graphics.translate(camera.x,camera.y)
       particleManager:draw(camera.x,camera.y)
-      starManager:draw()
+      starManager:draw(drawScale, false)
       player:draw()
   love.graphics.pop()
 end
@@ -61,7 +61,7 @@ function OrbitTest:keypressed()
   -- todo check gamestate..
   if starManager.nearestStar == nil then else
     local star = starManager:getClosestStar()
-    player:keypressed({ x = star.x + CENTERX, y = star.y + CENTERY })
+    player:keypressed({ x = star.x*drawScale, y = star.y*drawScale })
     starManager:keypressed()
   end
 end

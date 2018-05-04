@@ -41,9 +41,8 @@ function Star:initialize(attributes)
 	end
 end
 
-function Star:update(camera)
+function Star:update(camera, scale)
 	if self.constellation then return end
-
 
 	if self.x <  ((-camera.x) - Star.KILLZONEX) then
 		self.x = ((-camera.x) + (Star.KILLZONEX - Star.SAFEZONE))
@@ -65,13 +64,17 @@ end
 function Star:setF(value)
 end
 
-function Star:draw(value)
-	local scale = 1 -- todo
+function Star:draw(scale, outsideCircle)
 	if self.highlighted then
 		love.graphics.setColor(unpack(Star.COLOR2))	-- highlight
-		love.graphics.circle("fill",math.floor(self.x)*scale,math.floor(self.y)*scale,5)
+		love.graphics.circle(
+			"fill",
+			math.floor((self.x) * scale ),
+			math.floor((self.y) * scale ),
+			5 * -scale
+		)
 		love.graphics.setColor(unpack(Star.COLOR3))	-- normal, probably
-	elseif value == false then
+	elseif outsideCircle then
 		love.graphics.setColor(unpack(Star.COLOR1))	-- probably outside of a cluster- black on white
 	else
 		love.graphics.setColor(unpack(Star.COLOR3))	-- normal, probably
@@ -90,7 +93,16 @@ function Star:draw(value)
 	-- else
 		--love.graphics.draw(self.typ,math.floor(self.x),math.floor(self.y),0,self.scale,self.scale,2,2)
     -- end
-    love.graphics.draw(Star.types[self.typ],math.floor(self.x)*scale,math.floor(self.y)*scale,0,self.scale,self.scale,2,2)
+    love.graphics.draw(
+		Star.types[self.typ],
+		math.floor((self.x) * scale ),
+		math.floor((self.y) * scale ),
+		0,
+		-scale,
+		-scale,
+		2,
+		2
+	)
 end
 
 return Star

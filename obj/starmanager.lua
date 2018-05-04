@@ -22,7 +22,7 @@ function StarManager:initialize(attributes)
 	end
 end
 
-function StarManager:update(camera, player)
+function StarManager:update(camera, player, scale)
 	local closestStar 
 	if (self.updateNearest) then
 		if self.nearestStar then
@@ -32,10 +32,10 @@ function StarManager:update(camera, player)
 		closestStar = StarManager.MAX_DISTANCE
 	end
 	for i,v in ipairs(self.stars) do
-		self.stars[i]:update(camera)
+		self.stars[i]:update(camera, scale)
 
 		if (self.updateNearest) then
-			local starDistance = (self.stars[i].x - player.x+ CENTERX )^2 + (self.stars[i].y - player.y + CENTERY)^2
+			local starDistance = (self.stars[i].x * scale - player.x)^2 + (self.stars[i].y * scale - player.y)^2
 			if starDistance < closestStar then
 				closestStar = starDistance
 				self.nearestStar = i
@@ -51,13 +51,10 @@ function StarManager:getClosestStar()
 	return self.stars[self.nearestStar]
 end
 
-function StarManager:draw()
-	lg.push()
-	lg.translate(CENTERX,CENTERY)
-		for i,v in ipairs(self.stars) do
-			self.stars[i]:draw()
-		end
-	lg.pop()
+function StarManager:draw(scale, outsideCircle)
+	for i,v in ipairs(self.stars) do
+		self.stars[i]:draw(scale, outsideCircle)
+	end
 end
 
 function StarManager:keypressed()

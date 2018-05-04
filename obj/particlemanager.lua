@@ -36,19 +36,16 @@ function ParticleManager:initialize(attributes)
 	end
 end
 
-function ParticleManager:update(dt, vel, camera)
+function ParticleManager:update(dt, vel, camera, scale)
 	for i,v in ipairs(self.particles) do
-		self.particles[i]:update(dt,vel, camera)
+		self.particles[i]:update(dt,vel, camera, scale)
 	end
 end
 
 function ParticleManager:draw()
-	lg.push()
-	lg.translate(CENTERX,CENTERY)
 	for i,v in ipairs(self.particles) do
 		self.particles[i]:draw()
 	end
-	lg.pop()
 end
 
 return ParticleManager

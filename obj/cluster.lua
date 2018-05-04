@@ -135,7 +135,7 @@ function Cluster:debugDraw()
 	love.graphics.circle("line", self.x, self.y ,self.radius)
 end
 
-function Cluster:draw(cx,cy)
+function Cluster:draw(scale, cx,cy)
 	love.graphics.setColor(unpack(Cluster.COLOR1))
 	-- debug
 	-- love.graphics.circle("line",0.5+math.floor(self.x),0.5+math.floor(self.y),self.radius)
@@ -154,6 +154,9 @@ function Cluster:draw(cx,cy)
 
 		love.graphics.setStencilTest()
 		love.graphics.setColor(unpack(Cluster.COLOR1))
+		for i,v in ipairs(self.stars) do
+			self.stars[i]:draw(scale, outsideCircle)
+		end	
 	else
 		love.graphics.circle("fill",0.5+math.floor(self.x),0.5+math.floor(self.y),self.radius)
 	end
